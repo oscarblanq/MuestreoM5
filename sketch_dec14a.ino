@@ -47,6 +47,7 @@ void loop() {
       M5.Lcd.drawLine(contadorg, 0, contadorg, 200, 0);
       M5.Lcd.drawPixel(contadorg, 200-(analogRead(35))*escalar, 0xff80);
       contadorg++;
+      if (contadorg > 325) contadorg = 0;
     }
   
   if(M5.BtnA.wasPressed()){
@@ -136,7 +137,8 @@ void presentarDatosM5(){
 }
 
 void presentarDatosSerial(){
-    
+    Serial.println();
+    Serial.println("__________________________");
     Serial.print("Maxima : ");
     int resmax = (maxima(&valores[0]));
     Serial.println(resmax);
@@ -144,13 +146,15 @@ void presentarDatosSerial(){
     Serial.println(sacarVolts(resmax));
 
     Serial.println();
+    Serial.println("- - - - - - - - - - - - - ");
 
     Serial.print("Minima : ");
     int resmin = (minima(&valores[0]));
     Serial.println(resmin);
     Serial.print("Valor en volts : ");
     Serial.println(sacarVolts(resmin));
-  
+
+    Serial.println("- - - - - - - - - - - - - ");
     Serial.println();
 
     Serial.print("Media : ");
@@ -158,4 +162,6 @@ void presentarDatosSerial(){
     Serial.println(resmed);
     Serial.print("Valor en volts : ");
     Serial.println(sacarVolts(resmed));
+    Serial.println("__________________________");
+    Serial.println();
 }
