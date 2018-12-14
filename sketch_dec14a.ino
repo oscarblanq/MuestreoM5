@@ -8,6 +8,7 @@ int contador = 0;
 int contadorg = 0;
 bool estadoGrafico = false;
 float escalar = 200.0 / 4095.0;
+char command;
 
 void setup() {
   // put your setup code here, to run once:
@@ -20,6 +21,7 @@ void setup() {
 void loop() {
   
   contador++;
+  command = (char) Serial.read();
   // put your main code here, to run repeatedly:
   if(i == 200) i = 0;
   
@@ -30,36 +32,14 @@ void loop() {
     //vuelve a tomar otros 200 valores
   }
 
+  //DATOS EN ORDENADOR
+
+  if(command == 'a') presentarDatosSerial();
+
   //DATOS EN M5STACK
 
-  if(contador == 100){
-    contador = 0;
-    if(estadoGrafico == false){
-    
-    limpiarPantalla();
-    
-    M5.Lcd.print("Maxima : ");
-    int resmax = (maxima(&valores[0]));
-    M5.Lcd.println(resmax);
-    M5.Lcd.print("Valor en volts : ");
-    M5.Lcd.println(sacarVolts(resmax));
-
-    M5.Lcd.println();
-
-    M5.Lcd.print("Minima : ");
-    int resmin = (minima(&valores[0]));
-    M5.Lcd.println(resmin);
-    M5.Lcd.print("Valor en volts : ");
-    M5.Lcd.println(sacarVolts(resmin));
+  presentarDatosM5();
   
-    M5.Lcd.println();
-
-    M5.Lcd.print("Media : ");
-    int resmed = (media(&valores[0]));
-    M5.Lcd.println(resmed);
-    M5.Lcd.print("Valor en volts : ");
-  M5.Lcd.println(sacarVolts(resmed));
-    }
     
     if(estadoGrafico == true){
       //M5.Lcd.drawLine(0,200,320,200,0xff80);//X
@@ -68,7 +48,6 @@ void loop() {
       M5.Lcd.drawPixel(contadorg, 200-(analogRead(35))*escalar, 0xff80);
       contadorg++;
     }
-  }
   
   if(M5.BtnA.wasPressed()){
       limpiarPantalla();  
@@ -86,7 +65,7 @@ void loop() {
     
     M5.update();
     delay(10);
-}  
+}
 
 int maxima(int *p){
   int resultadoMax = 0;
@@ -122,4 +101,61 @@ double sacarVolts(unsigned int var){
 void limpiarPantalla(){
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0,0);  
+}
+
+void presentarDatosM5(){
+  if(contador == 100){
+    contador = 0;
+    if(estadoGrafico == false){
+    
+    limpiarPantalla();
+    
+    M5.Lcd.print("Maxima : ");
+    int resmax = (maxima(&valores[0]));
+    M5.Lcd.println(resmax);
+    M5.Lcd.print("Valor en volts : ");
+    M5.Lcd.println(sacarVolts(resmax));
+
+    M5.Lcd.println();
+
+    M5.Lcd.print("Minima : ");
+    int resmin = (minima(&valores[0]));
+    M5.Lcd.println(resmin);
+    M5.Lcd.print("Valor en volts : ");
+    M5.Lcd.println(sacarVolts(resmin));
+  
+    M5.Lcd.println();
+
+    M5.Lcd.print("Media : ");
+    int resmed = (media(&valores[0]));
+    M5.Lcd.println(resmed);
+    M5.Lcd.print("Valor en volts : ");
+  M5.Lcd.println(sacarVolts(resmed));
+    }
+  }
+}
+
+void presentarDatosSerial(){
+    
+    Serial.print("Maxima : ");
+    int resmax = (maxima(&valores[0]));
+    Serial.println(resmax);
+    Serial.print("Valor en volts : ");
+    Serial.println(sacarVolts(resmax));
+
+    Serial.println();
+
+    Serial.print("Minima : ");
+    int resmin = (minima(&valores[0]));
+    Serial.println(resmin);
+    Serial.print("Valor en volts : ");
+    Serial.println(sacarVolts(resmin));
+  
+    Serial.println();
+
+    Serial.print("Media : ");
+    int resmed = (media(&valores[0]));
+    Serial.println(resmed);
+    Serial.print("Valor en volts : ");
+    Serial.println(sacarVolts(resmed));
 }
