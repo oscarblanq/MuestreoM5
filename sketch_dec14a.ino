@@ -1,11 +1,13 @@
 #include <M5Stack.h>
 
-const int MQ_PIN = 35;
-const int MQ_DELAY = 100;
+const int MQ_PIN = 35;  //pin analógico
+const int MQ_DELAY = 100;   
 int valores [200];
 int i = 0;
 int contador = 0;
+int contadorg = 0;
 bool estadoGrafico = false;
+float escalar = 200.0 / 4095.0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -20,8 +22,6 @@ void loop() {
   contador++;
   // put your main code here, to run repeatedly:
   if(i == 200) i = 0;
-
-  limpiarPantalla();
   
   //Se rellena el array con los valores obtenidos del pin
   for(int i = 0; i < 200; i++){
@@ -33,35 +33,40 @@ void loop() {
   //DATOS EN M5STACK
 
   if(contador == 100){
+    contador = 0;
     if(estadoGrafico == false){
     
     limpiarPantalla();
+    
+    M5.Lcd.print("Maxima : ");
+    int resmax = (maxima(&valores[0]));
+    M5.Lcd.println(resmax);
+    M5.Lcd.print("Valor en volts : ");
+    M5.Lcd.println(sacarVolts(resmax));
 
-  M5.Lcd.print("Maxima : ");
-  int resmax = (maxima(&valores[0]));
-  M5.Lcd.println(resmax);
-  M5.Lcd.print("Valor en volts : ");
-  M5.Lcd.println(sacarVolts(resmax));
+    M5.Lcd.println();
 
-  M5.Lcd.println();
-
-  M5.Lcd.print("Minima : ");
-  int resmin = (minima(&valores[0]));
-  M5.Lcd.println(resmin);
-  M5.Lcd.print("Valor en volts : ");
-  M5.Lcd.println(sacarVolts(resmin));
+    M5.Lcd.print("Minima : ");
+    int resmin = (minima(&valores[0]));
+    M5.Lcd.println(resmin);
+    M5.Lcd.print("Valor en volts : ");
+    M5.Lcd.println(sacarVolts(resmin));
   
-  M5.Lcd.println();
+    M5.Lcd.println();
 
-  M5.Lcd.print("Media : ");
-  int resmed = (media(&valores[0]));
-  M5.Lcd.println(resmed);
-  M5.Lcd.print("Valor en volts : ");
+    M5.Lcd.print("Media : ");
+    int resmed = (media(&valores[0]));
+    M5.Lcd.println(resmed);
+    M5.Lcd.print("Valor en volts : ");
   M5.Lcd.println(sacarVolts(resmed));
-    }   
-
+    }
+    
     if(estadoGrafico == true){
-      M5.Lcd.println("Botón  A  Pulsado");
+      //M5.Lcd.drawLine(0,200,320,200,0xff80);//X
+      //M5.Lcd.drawLine(20,215,20,0,0xff80);//Y
+      M5.Lcd.drawLine(contadorg, 0, contadorg, 200, 0);
+      M5.Lcd.drawPixel(contadorg, 200-(analogRead(35))*escalar, 0xff80);
+      contadorg++;
     }
   }
   
@@ -74,7 +79,6 @@ void loop() {
       contador = 0;
     } else {
     estadoGrafico = false;
-    Serial.println(estadoGrafico);
     contador = 0;
       }
       M5.update();
